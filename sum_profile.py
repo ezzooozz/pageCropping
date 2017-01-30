@@ -24,33 +24,35 @@ if __name__ == "__main__":
 
     img = ndimage.imread(input_path)
     profile = sum_profile(img, axis)
-    furthestTroph = 0
+    furthestTrough = 0
     pixelsIn = 0
     peaked = False
     for val in profile:
-        if val >= furthestTroph and peaked == False:
-            furthestTroph = val
+        if val >= furthestTrough and peaked == False:
+            furthestTrough = val
         else:
             peaked = True
-            if val < furthestTroph:
-                furthestTroph = val
+            if val < furthestTrough:
+                furthestTrough = val
             else:
                 break
         pixelsIn += 1
 
-    trophs = np.r_[True, profile[1:] < profile[:-1]] & np.r_[profile[:-1] < profile[1:], True]
-    print(trophs)
+    troughs = np.r_[True, profile[1:] < profile[:-1]] & np.r_[profile[:-1] < profile[1:], True]
+    # print(troughs)
 
     spot = 0
-    for tru in trophs:
-        if tru == True:
-            print(spot)
-        spot += 1
+    # for tru in troughs:
+        # if tru == True:
+            # print(spot)
+        # spot += 1
 
     pic = Image.open(sys.argv[1])
     w,h = pic.size
-    pic2 = pic.crop((pixelsIn, 0, w, h))
+    print('width: ' + str(w) + ' height: ' + str(h))
+    pic2 = pic.crop(((pixelsIn + (w/100)), 0, w, h))
     pic2.save(sys.argv[2])
 
-    #plt.plot(profile)
+    plt.plot(profile[int(pixelsIn + (w/100)):])
+    plt.show()
     #plt.savefig(output_path)
