@@ -1,5 +1,5 @@
 import numpy as np
-from scipy import ndimage, misc
+from scipy import ndimage, misc, stats
 from PIL import Image
 import sys
 import matplotlib.pyplot as plt
@@ -24,35 +24,26 @@ if __name__ == "__main__":
 
     img = ndimage.imread(input_path)
     profile = sum_profile(img, axis)
-    furthestTrough = 0
-    pixelsIn = 0
-    peaked = False
-    for val in profile:
-        if val >= furthestTrough and peaked == False:
-            furthestTrough = val
-        else:
-            peaked = True
-            if val < furthestTrough:
-                furthestTrough = val
-            else:
-                break
-        pixelsIn += 1
 
-    troughs = np.r_[True, profile[1:] < profile[:-1]] & np.r_[profile[:-1] < profile[1:], True]
-    # print(troughs)
+    maxVal = max(profile) # Absolute max value in profile array
+    minVal = min(profile) # Absolute min value in profile array
 
-    spot = 0
-    # for tru in troughs:
-        # if tru == True:
-            # print(spot)
-        # spot += 1
+    avgVal = int((maxVal - minVal) / 2) # This is our threshold value (cut out anything lower than this)
+
+    # print('max: ' + str(maxVal) + ' min: ' + str(minVal) + ' avg: ' + str(avgVal))
+    newProfile = stats.threshold(profile, threshmin=avgVal)
+    firstNonZeroIndex = next((index for index,value in enumerate(newProfile) if value != 0), None) # Grab the first index of the cropped image
+    lastNonZeroIndex = len(newProfile) - next((index for index,value in enumerate(list(reversed(newProfile))) if value != 0), None) # Grab the last index of the cropped image
+    # newProfile = newProfile[firstNonZeroIndex:lastNonZeroIndex] # Reform the profile to be just the cropped dimensions.
 
     pic = Image.open(sys.argv[1])
     w,h = pic.size
-    print('width: ' + str(w) + ' height: ' + str(h))
-    pic2 = pic.crop(((pixelsIn + (w/100)), 0, w, h))
+    print('Original width ' + str(w) + ' and height ' + str(h))
+    pic2 = pic.crop((firstNonZeroIndex, 0, lastNonZeroIndex, h))
     pic2.save(sys.argv[2])
 
-    plt.plot(profile[int(pixelsIn + (w/100)):])
+    plt.plot(profile)
+    plt.plot(newProfile)
     plt.show()
+
     #plt.savefig(output_path)
