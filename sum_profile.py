@@ -3,6 +3,8 @@ from scipy import ndimage, misc, stats
 from PIL import Image
 import sys
 import matplotlib.pyplot as plt
+from skimage.filters.rank import median
+from skimage.morphology import disk
 
 HORIZONTAL = 0
 VERTICAL = 1
@@ -45,13 +47,18 @@ def crop_profile(image, profile, direction):
 if __name__ == "__main__":
     input_path = sys.argv[1]
     output_path = sys.argv[2]
-    axis = int(sys.argv[3])
+    # axis = int(sys.argv[3])
 
+    # Transform the original image using a median filter of radius 22px.
     img = ndimage.imread(input_path)
+    img = median(img, disk((22)))
+    # For diagnostics on median filter step
+    # misc.imsave('outfile.jpg', img)
+
     hProfile = sum_profile(img, 0) # Horizontal profile
     vProfile = sum_profile(img, 1) # Vertical profile
 
-    pic = Image.open(sys.argv[1])
+    pic = Image.fromarray(img)
 
     '''Horizontal Profile Cropping'''
     pic, newHProfile = crop_profile(pic, hProfile, HORIZONTAL)
@@ -67,11 +74,13 @@ if __name__ == "__main__":
     plt.plot(newVProfile, label='cropped')
     plt.legend()
     plt.title('Vertical Profile')
+    plt.savefig('plotvOutput.png')
+
     plt.figure(1)
     plt.plot(hProfile, label='original')
     plt.plot(newHProfile, label='cropped')
     plt.title('Horizontal Profile')
     plt.legend()
+    plt.savefig('plothOutput.png')
     plt.show()
 
-    #plt.savefig(output_path)
