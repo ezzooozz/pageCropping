@@ -5,6 +5,7 @@ import sys
 import matplotlib.pyplot as plt
 from skimage.filters.rank import median
 from skimage.morphology import disk
+from scipy import ndimage
 
 HORIZONTAL = 0
 VERTICAL = 1
@@ -33,6 +34,10 @@ def crop_profile(image, profile, direction):
     firstNonZeroIndex = next((index for index,value in enumerate(newProfile) if value != 0), None) # Grab the first index of the cropped image
     lastNonZeroIndex = len(newProfile) - next((index for index,value in enumerate(list(reversed(newProfile))) if value != 0), None) # Grab the last index of the cropped image
     # newProfile = newProfile[firstNonZeroIndex:lastNonZeroIndex] # Reform the profile to be just the cropped dimensions.
+
+    
+    for i in range(0,20):
+        print(np.var(newProfile[i*(len(newProfile)/20):(i+1)*(len(newProfile)/20)]))
 
     w,h = image.size
     print('Original width ' + str(w) + ' and height ' + str(h))
