@@ -23,7 +23,7 @@ def to_gray(img):
     gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
     return gray
 
-def crop_profile(image, profile, direction):
+def crop_profile(original,image, profile, direction):
     maxVal = max(profile) # Absolute max value in profile array
     minVal = min(profile) # Absolute min value in profile array
 
@@ -36,15 +36,20 @@ def crop_profile(image, profile, direction):
     # newProfile = newProfile[firstNonZeroIndex:lastNonZeroIndex] # Reform the profile to be just the cropped dimensions.
 
     
-    for i in range(0,20):
-        print(np.var(newProfile[i*(len(newProfile)/20):(i+1)*(len(newProfile)/20)]))
+
+    slope, intercept, r_value, p_value, std_err = stats.linregress(np.arange(len(newProfile)),newProfile)
+
+    print(slope)
+    print(r_value)
+    print(p_value)
+    print(std_err)
 
     w,h = image.size
     print('Original width ' + str(w) + ' and height ' + str(h))
     if(direction == HORIZONTAL):
-        pic2 = image.crop((firstNonZeroIndex, 0, lastNonZeroIndex, h))
+        pic2 = original.crop((firstNonZeroIndex, 0, lastNonZeroIndex, h))
     else:
-        pic2 = image.crop((0, firstNonZeroIndex, w, lastNonZeroIndex))
+        pic2 = original.crop((0, firstNonZeroIndex, w, lastNonZeroIndex))
 
     return pic2, newProfile
 
@@ -64,28 +69,29 @@ if __name__ == "__main__":
     vProfile = sum_profile(img, 1) # Vertical profile
 
     pic = Image.fromarray(img)
+    original = Image.open(sys.argv[1])
 
     '''Horizontal Profile Cropping'''
-    pic, newHProfile = crop_profile(pic, hProfile, HORIZONTAL)
+    pic, newHProfile = crop_profile(original,pic, hProfile, HORIZONTAL)
 
     '''Vertical Profile Cropping'''
-    pic, newVProfile = crop_profile(pic, vProfile, VERTICAL)
+    pic, newVProfile = crop_profile(pic,pic, vProfile, VERTICAL)
 
     # Save the updated picture object
     pic.save(sys.argv[2])
 
-    plt.figure(0)
-    plt.plot(vProfile, label='original')
-    plt.plot(newVProfile, label='cropped')
-    plt.legend()
-    plt.title('Vertical Profile')
-    plt.savefig('plotvOutput.png')
+    # plt.figure(0)
+    # plt.plot(vProfile, label='original')
+    # plt.plot(newVProfile, label='cropped')
+    # plt.legend()
+    # plt.title('Vertical Profile')
+    # plt.savefig('plotvOutput.png')
 
-    plt.figure(1)
-    plt.plot(hProfile, label='original')
-    plt.plot(newHProfile, label='cropped')
-    plt.title('Horizontal Profile')
-    plt.legend()
-    plt.savefig('plothOutput.png')
-    plt.show()
+    # plt.figure(1)
+    # plt.plot(hProfile, label='original')
+    # plt.plot(newHProfile, label='cropped')
+    # plt.title('Horizontal Profile')
+    # plt.legend()
+    # plt.savefig('plothOutput.png')
+    # plt.show()
 
