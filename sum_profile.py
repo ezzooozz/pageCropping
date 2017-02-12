@@ -5,6 +5,7 @@ import sys
 import matplotlib.pyplot as plt
 from skimage.filters.rank import median
 from skimage.morphology import disk
+from skimage import img_as_float
 from scipy import ndimage
 
 HORIZONTAL = 0
@@ -35,15 +36,6 @@ def crop_profile(original,image, profile, direction):
     lastNonZeroIndex = len(newProfile) - next((index for index,value in enumerate(list(reversed(newProfile))) if value != 0), None) # Grab the last index of the cropped image
     # newProfile = newProfile[firstNonZeroIndex:lastNonZeroIndex] # Reform the profile to be just the cropped dimensions.
 
-    
-
-    slope, intercept, r_value, p_value, std_err = stats.linregress(np.arange(len(newProfile)),newProfile)
-
-    print(slope)
-    print(r_value)
-    print(p_value)
-    print(std_err)
-
     w,h = image.size
     print('Original width ' + str(w) + ' and height ' + str(h))
     if(direction == HORIZONTAL):
@@ -60,8 +52,10 @@ if __name__ == "__main__":
     # axis = int(sys.argv[3])
 
     # Transform the original image using a median filter of radius 22px.
-    img = ndimage.imread(input_path)
-    img = median(img, disk((22)))
+    img = ndimage.imread(input_path, flatten=True)
+    # img = median(img, disk((60)))
+    img = ndimage.gaussian_filter(img, sigma=3)
+    # img = ndimage.filters.median_filter(img,size=22)
     # For diagnostics on median filter step
     # misc.imsave('outfile.jpg', img)
 
@@ -80,18 +74,18 @@ if __name__ == "__main__":
     # Save the updated picture object
     pic.save(sys.argv[2])
 
-    # plt.figure(0)
-    # plt.plot(vProfile, label='original')
-    # plt.plot(newVProfile, label='cropped')
-    # plt.legend()
-    # plt.title('Vertical Profile')
-    # plt.savefig('plotvOutput.png')
+    plt.figure(0)
+    plt.plot(vProfile, label='original')
+    plt.plot(newVProfile, label='cropped')
+    plt.legend()
+    plt.title('Vertical Profile')
+    plt.savefig('plotvOutput.png')
 
-    # plt.figure(1)
-    # plt.plot(hProfile, label='original')
-    # plt.plot(newHProfile, label='cropped')
-    # plt.title('Horizontal Profile')
-    # plt.legend()
-    # plt.savefig('plothOutput.png')
-    # plt.show()
+    plt.figure(1)
+    plt.plot(hProfile, label='original')
+    plt.plot(newHProfile, label='cropped')
+    plt.title('Horizontal Profile')
+    plt.legend()
+    plt.savefig('plothOutput.png')
+    plt.show()
 
