@@ -53,9 +53,8 @@ if __name__ == "__main__":
 
     # Transform the original image using a median filter of radius 22px.
     img = ndimage.imread(input_path, flatten=True)
-    # img = median(img, disk((60)))
-    img = ndimage.gaussian_filter(img, sigma=3)
-    # img = ndimage.filters.median_filter(img,size=22)
+    img = median(img, disk((60)))
+    #img = ndimage.gaussian_filter(img, sigma=3)
     # For diagnostics on median filter step
     # misc.imsave('outfile.jpg', img)
 
