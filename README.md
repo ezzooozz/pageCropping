@@ -9,3 +9,5 @@ Tasks:
 4. ~~analyze 2 & 3 edges for multiple pages, top page edge~~
 5. ~~crop background based on 2 & 3~~
 6. ~~image pyramid~~
+
+https://docs.google.com/presentation/d/14nmSl-nF58mYPzx-baaJTHgMxS2sYBIxmgJrCmKqK7o/edit?usp=sharing
