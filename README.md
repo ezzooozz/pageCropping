@@ -11,3 +11,4 @@ Tasks:
 6. ~~image pyramid~~
 
 https://docs.google.com/presentation/d/14nmSl-nF58mYPzx-baaJTHgMxS2sYBIxmgJrCmKqK7o/edit?usp=sharing
+https://docs.google.com/document/d/1iDbYF4UxUnasoID6gT7phKpNVZ94INYi11g13d0tPNQ/edit?usp=sharing
